@@ -42,7 +42,7 @@ pub fn runner(udp_socket: UdpSocket) {
 
                 // write questions to buffer
                 let mut resp: Vec<u8> = Vec::new();
-                for question in questions {
+                for question in &questions {
                     question.write_bytes(&mut resp);
                 }
 
@@ -52,18 +52,20 @@ pub fn runner(udp_socket: UdpSocket) {
                 start_idx += resp.len();
 
                 // write answer
-                let mut answer = DnsAnswer::new();
-                answer.name = "codecrafters.io".to_owned();
-                answer.qtype = 1;
-                answer.qclass = 1;
-                answer.ttl = 60;
-                answer.data_len = 4;
-                answer.data = vec![8, 8, 8, 8];
+                for question in &questions {
+                    let mut answer = DnsAnswer::new();
+                    answer.name = question.qname.clone();
+                    answer.qtype = 1;
+                    answer.qclass = 1;
+                    answer.ttl = 60;
+                    answer.data_len = 4;
+                    answer.data = vec![8, 8, 8, 8];
 
-                resp.clear();
-                answer.write_bytes(&mut resp);
-                buf[start_idx..start_idx + resp.len()].copy_from_slice(&resp);
-                start_idx += resp.len();
+                    resp.clear();
+                    answer.write_bytes(&mut resp);
+                    buf[start_idx..start_idx + resp.len()].copy_from_slice(&resp);
+                    start_idx += resp.len();
+                }
 
                 udp_socket
                     .send_to(&buf, source)

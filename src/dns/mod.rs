@@ -88,9 +88,9 @@ impl DnsHeader {
 
 #[derive(Debug)]
 pub struct DnsQuestion {
-    qname: String,
-    qtype: u16,
-    qclass: u16,
+    pub qname: String,
+    pub qtype: u16,
+    pub qclass: u16,
 }
 
 impl DnsQuestion {
