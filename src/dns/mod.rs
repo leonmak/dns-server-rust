@@ -3,18 +3,18 @@ use byteorder::{BigEndian, ByteOrder};
 #[allow(dead_code)]
 pub struct DnsHeader {
     pub id: u16,      // Packet Identifier (ID)
-    qr: bool,         // Query/Response Indicator (QR)
-    opcode: u16,      // Operation Code (OPCODE)
-    aa: bool,         // Authoritative Answer (AA)
-    tc: bool,         // Truncation (TC)
-    rd: bool,         // Recursion Desired (RD)
-    ra: bool,         // Recursion Available (RA)
-    z: u8,            // Reserved (Z)
-    rcode: u8,        // Response Code (RCODE)
+    pub qr: bool,     // Query/Response Indicator (QR)
+    pub opcode: u16,  // Operation Code (OPCODE)
+    pub aa: bool,     // Authoritative Answer (AA)
+    pub tc: bool,     // Truncation (TC)
+    pub rd: bool,     // Recursion Desired (RD)
+    pub ra: bool,     // Recursion Available (RA)
+    pub z: u8,        // Reserved (Z)
+    pub rcode: u8,    // Response Code (RCODE)
     pub qdcount: u16, // Question Count (QDCOUNT)
-    ancount: u16,     // Answer Record Count (ANCOUNT)
-    nscount: u16,     // Authority Record Count (NSCOUNT)
-    arcount: u16,     // Additional Record Count (ARCOUNT)
+    pub ancount: u16, // Answer Record Count (ANCOUNT)
+    pub nscount: u16, // Authority Record Count (NSCOUNT)
+    pub arcount: u16, // Additional Record Count (ARCOUNT)
 }
 
 #[allow(dead_code)]
