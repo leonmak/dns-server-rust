@@ -1,9 +1,4 @@
-use std::{
-    net::UdpSocket,
-    os::unix::process::CommandExt,
-    process::{Command, ExitStatus},
-    thread,
-};
+use std::{net::UdpSocket, process::Command, thread};
 
 use dns_starter_rust::runner;
 
