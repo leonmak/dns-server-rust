@@ -93,29 +93,67 @@ pub struct DnsQuestion {
     pub qclass: u16,
 }
 
+// add question section
+
+fn get_pointer_name(pointer_offset: usize, buffer: &[u8]) -> String {
+    if pointer_offset >= buffer.len() {
+        return String::new();
+    }
+
+    let mut name = String::new();
+    let mut i = pointer_offset;
+    loop {
+        let len = buffer[i] as usize;
+        i += 1;
+        if len == 0 {
+            break;
+        } else {
+            name.push_str(&String::from_utf8_lossy(&buffer[i..i + len]));
+            name.push('.');
+            i += len;
+        }
+    }
+    println!("ptr name: {:?}", name);
+    name
+}
+
 impl DnsQuestion {
     pub fn from_bytes(buffer: &[u8], offset: &mut usize) -> Self {
-        let mut qname = String::new();
         let i = offset;
+        let mut name = String::new();
+        let mut is_pointer = false;
+        let mut pointer_offset = 0;
+
         loop {
             // 1st byte is length of label
             let len = buffer[*i] as usize;
             *i += 1;
             if len == 0 {
                 break;
+            } else if (len & 0xC0) == 0xC0 {
+                // 11 leading is a pointer
+                is_pointer = true;
+                pointer_offset = ((len & 0x3F) << 8) | buffer[*i] as usize;
+                *i += 1;
+                break;
+            } else {
+                name.push_str(&String::from_utf8_lossy(&buffer[*i..*i + len]));
+                name.push('.');
+                *i += len;
             }
-            qname.push_str(&String::from_utf8_lossy(&buffer[*i..*i + len]));
-            qname.push('.');
-            *i += len;
         }
-        qname.pop(); // Remove the trailing dot
+
+        if is_pointer {
+            name = get_pointer_name(pointer_offset, buffer);
+        }
+        name.pop(); // Remove the trailing dot
 
         let qtype = BigEndian::read_u16(&buffer[*i..*i + 2]);
         *i += 2;
         let qclass = BigEndian::read_u16(&buffer[*i..*i + 2]);
 
         DnsQuestion {
-            qname,
+            qname: name,
             qtype,
             qclass,
         }
@@ -161,6 +199,7 @@ impl DnsAnswer {
         }
     }
 
+    #[allow(dead_code)]
     pub fn from_bytes(buffer: &[u8], offset: &mut usize) -> Self {
         // Parse the name
         let mut name = String::new();
