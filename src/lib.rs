@@ -26,7 +26,7 @@ pub fn runner(udp_socket: UdpSocket) {
                 header.set_is_resp(true);
                 header.set_id(header.id);
                 header.set_num_questions(questions.len() as u16);
-                header.set_answer_count(1);
+                header.set_answer_count(questions.len() as u16);
                 // 0 (no error) if OPCODE is 0 (standard query) else 4 (not implemented)
                 if header.opcode == 0 {
                     header.rcode = 0;
