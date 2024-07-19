@@ -7,7 +7,8 @@ fn when_dig_get_header() {
     // Start the runner in a separate thread
     let runner_thread = thread::spawn(|| {
         let udp_socket = UdpSocket::bind("127.0.0.1:2053").expect("Failed to bind to address");
-        runner(udp_socket);
+        let resolver_addr = None;
+        runner(udp_socket, resolver_addr);
     });
 
     let output = Command::new("dig")

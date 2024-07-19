@@ -1,9 +1,13 @@
 mod dns;
 
 use dns::*;
-use std::net::{IpAddr, UdpSocket};
+use std::net::{SocketAddr, UdpSocket};
+use trust_dns_resolver::{
+    config::{NameServerConfig, ResolverConfig, ResolverOpts},
+    Resolver,
+};
 
-pub fn runner(udp_socket: UdpSocket, resolver_ip: IpAddr) {
+pub fn runner(udp_socket: UdpSocket, resolver_addr: Option<SocketAddr>) {
     let mut buf = [0; 1024];
 
     loop {
@@ -58,10 +62,24 @@ pub fn runner(udp_socket: UdpSocket, resolver_ip: IpAddr) {
                     answer.qtype = 1;
                     answer.qclass = 1;
                     answer.ttl = 60;
-                    answer.data_len = 4;
-                    // mimic the data from resolved server
-                    answer.set_ip_addr(resolver_ip);
 
+                    // mimic the data from resolved server
+                    if let Some(addr) = resolver_addr {
+                        let mut config = ResolverConfig::new();
+                        config.add_name_server(NameServerConfig::new(
+                            addr,
+                            trust_dns_resolver::config::Protocol::Udp,
+                        ));
+                        let resolver = Resolver::new(config, ResolverOpts::default()).unwrap();
+                        let resp = resolver.lookup_ip(answer.name.clone()).unwrap();
+                        if let Some(resp_ip) = resp.iter().next() {
+                            answer.set_ip_addr(resp_ip);
+                        }
+                    } else {
+                        answer.data = vec![8, 8, 8, 8];
+                        answer.data_len = answer.data.len() as u16;
+                    }
+                    // answer.set_ip_addr(resolver_ip);
                     resp.clear();
                     answer.write_bytes(&mut resp);
                     buf[start_idx..start_idx + resp.len()].copy_from_slice(&resp);

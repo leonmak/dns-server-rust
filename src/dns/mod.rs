@@ -191,6 +191,7 @@ impl DnsAnswer {
         };
         self.data_len = self.data.len() as u16;
     }
+
     pub fn new() -> Self {
         DnsAnswer {
             name: String::new(),
