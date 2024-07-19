@@ -1,9 +1,9 @@
 mod dns;
 
 use dns::*;
-use std::net::UdpSocket;
+use std::net::{IpAddr, UdpSocket};
 
-pub fn runner(udp_socket: UdpSocket) {
+pub fn runner(udp_socket: UdpSocket, resolver_ip: IpAddr) {
     let mut buf = [0; 1024];
 
     loop {
@@ -59,7 +59,8 @@ pub fn runner(udp_socket: UdpSocket) {
                     answer.qclass = 1;
                     answer.ttl = 60;
                     answer.data_len = 4;
-                    answer.data = vec![8, 8, 8, 8];
+                    // mimic the data from resolved server
+                    answer.set_ip_addr(resolver_ip);
 
                     resp.clear();
                     answer.write_bytes(&mut resp);

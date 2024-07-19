@@ -1,4 +1,5 @@
 use byteorder::{BigEndian, ByteOrder};
+use std::net::IpAddr;
 
 #[allow(dead_code)]
 pub struct DnsHeader {
@@ -183,7 +184,13 @@ pub struct DnsAnswer {
 }
 
 impl DnsAnswer {
-    // new
+    pub fn set_ip_addr(&mut self, ip_addr: IpAddr) {
+        self.data = match ip_addr {
+            IpAddr::V4(ipv4) => ipv4.octets().to_vec(),
+            IpAddr::V6(ipv6) => ipv6.octets().to_vec(),
+        };
+        self.data_len = self.data.len() as u16;
+    }
     pub fn new() -> Self {
         DnsAnswer {
             name: String::new(),
