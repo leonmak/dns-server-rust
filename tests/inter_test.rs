@@ -28,12 +28,14 @@ fn when_dig_get_header() {
     assert!(stdout.contains(";; global options: +cmd"));
     assert!(stdout.contains(";; Got answer:"));
     assert!(stdout.contains(";; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: "));
-    assert!(stdout.contains(";; flags: qr rd; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0"));
+    assert!(stdout.contains(";; flags: qr rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0"));
     assert!(stdout.contains(";; QUESTION SECTION:"));
     assert!(stdout.contains(";codecrafters.io."));
+    assert!(stdout.contains(";; ANSWER SECTION:"));
+    assert!(stdout.contains("codecrafters.io."));
     assert!(stdout.contains("IN"));
     assert!(stdout.contains("A"));
-    assert!(stdout.contains(";; MSG SIZE  rcvd: 512"));
+    assert!(stdout.contains(";; MSG SIZE  rcvd: 1024"));
 
     runner_thread.thread().unpark();
 }
