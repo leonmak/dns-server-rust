@@ -1,6 +1,7 @@
-use std::{net::UdpSocket, process::Command, thread};
+mod dns;
 
-use dns_starter_rust::dns::redis_runner;
+use crate::dns::redis_runner;
+use std::{net::UdpSocket, process::Command, thread};
 
 #[test]
 fn when_dig_get_header() {
