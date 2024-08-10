@@ -1,7 +1,8 @@
 use std::env;
 use std::net::{IpAddr, UdpSocket};
 
-use dns_starter_rust::dns::redis_runner;
+mod dns;
+use crate::dns::redis_runner;
 
 #[allow(dead_code)]
 fn main() {
