@@ -1,7 +1,7 @@
 use std::env;
 use std::net::{IpAddr, UdpSocket};
 
-use dns_starter_rust::runner;
+use dns_starter_rust::dns::redis_runner;
 
 #[allow(dead_code)]
 fn main() {
@@ -16,5 +16,5 @@ fn main() {
     let socket_addr = Some(std::net::SocketAddr::new(resolver_ip, resolver_port));
     // Uncomment this block to pass the first stage
     let udp_socket = UdpSocket::bind("127.0.0.1:2053").expect("Failed to bind to address");
-    runner(udp_socket, socket_addr);
+    redis_runner::handle(udp_socket, socket_addr);
 }

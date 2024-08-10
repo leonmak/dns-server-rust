@@ -1,6 +1,6 @@
 use std::{net::UdpSocket, process::Command, thread};
 
-use dns_starter_rust::runner;
+use dns_starter_rust::dns::redis_runner;
 
 #[test]
 fn when_dig_get_header() {
@@ -8,7 +8,7 @@ fn when_dig_get_header() {
     let runner_thread = thread::spawn(|| {
         let udp_socket = UdpSocket::bind("127.0.0.1:2053").expect("Failed to bind to address");
         let resolver_addr = None;
-        runner(udp_socket, resolver_addr);
+        redis_runner::handle(udp_socket, resolver_addr);
     });
 
     let output = Command::new("dig")
